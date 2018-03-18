@@ -35,10 +35,10 @@ public:
 	int shape; 
 	int next_shape;
 
-	int head_x;
+	int head_x; //location of shapes or bricks.
 	int head_y;
 
-	int size_h;
+	int size_h;  //record the size of shapes or bricks.
 	int size_w;
 
 	int next_size_h;
@@ -47,7 +47,7 @@ public:
 	int box_shape[4][4];
 	int next_box_shape[4][4];
 
-	int box_map[30][45];
+	int box_map[30][45];  // record all the shapes stored in the bottom.
 
 	bool game_over;
 
@@ -68,21 +68,21 @@ public:
 int main()
 {
 
-	initscr();
+	initscr(); //initial stdscreen
 	//raw();
-	cbreak();
-	noecho();
-	curs_set(0);
-	keypad(stdscr,TRUE);
+	cbreak();  // close button-click buffer
+	noecho();  // button echo closed
+	curs_set(0);  // ???
+	keypad(stdscr,TRUE);  //open function button
 
 	refresh();
 	
-	game_win = create_newwin(game_win_height, game_win_width, 0,0);
-	wborder(game_win, '*', '*', '*', '*', '*', '*', '*', '*');
+	game_win = create_newwin(game_win_height, game_win_width, 0,0);  // main window in game.
+	wborder(game_win, '*', '*', '*', '*', '*', '*', '*', '*');   // border or boundary...
 	wrefresh(game_win);
 
-	hint_win = create_newwin(hint_win_height, hint_win_width, 0, game_win_width+10);
-	mvprintw(0, game_win_width+10+2,"%s","Next");
+	hint_win = create_newwin(hint_win_height, hint_win_width, 0, game_win_width+10);  // hint window in up-right corner of game_win window.
+	mvprintw(0, game_win_width+10+2,"%s","Next");  //move curser first.
 	refresh();
 
 	score_win = create_newwin(hint_win_height, hint_win_width, 20, game_win_width+10);
@@ -123,7 +123,7 @@ WINDOW *create_newwin(int height, int width, int starty, int startx)
 {
 	WINDOW *local_win;
 	local_win = newwin(height, width, starty, startx);
-	box(local_win,0,0);
+	box(local_win,0,0);  //add boundary.
 	wrefresh(local_win);
 	return local_win;
 }
@@ -150,13 +150,13 @@ void Piece::initial()
 		}
 
 	srand((unsigned)time(0));
-	shape=getrand(0,6);
+	shape=getrand(0,6); //7 kind of shapes.
 	set_shape(shape,box_shape,size_w,size_h);
 
 	next_shape=getrand(0,6);
 	set_shape(next_shape,next_box_shape,next_size_w,next_size_h);
 
-	for(int i =0;i<4;i++)
+	for(int i =0;i<4;i++)  //every shape is consist of 4*4 square.
 		for(int j=0;j<4;j++)
 			if(next_box_shape[i][j]==1){
 				mvwaddch(hint_win,(hint_win_height-size_h)/2+i,(hint_win_width-size_w)/2+j,'#');
@@ -176,7 +176,7 @@ void Piece::set_shape(int &cshape, int shape[][4],int &size_w,int &size_h)
 			shape[i][j]=0;
 	switch(cshape)
 	{
-		case 0:	
+		case 0:	//----
 			size_h=1;
 			size_w=4;	
 			shape[0][0]=1;
@@ -184,7 +184,7 @@ void Piece::set_shape(int &cshape, int shape[][4],int &size_w,int &size_h)
 			shape[0][2]=1;
 			shape[0][3]=1;
 			break;
-		case 1:
+		case 1: //L__
 			size_h=2;
 			size_w=3;
 			shape[0][0]=1;
@@ -192,7 +192,7 @@ void Piece::set_shape(int &cshape, int shape[][4],int &size_w,int &size_h)
 			shape[1][1]=1;
 			shape[1][2]=1;
 			break;
-		case 2:
+		case 2:  //__|
 			size_h=2;
 			size_w=3;	
 			shape[0][2]=1;
@@ -200,7 +200,7 @@ void Piece::set_shape(int &cshape, int shape[][4],int &size_w,int &size_h)
 			shape[1][1]=1;
 			shape[1][2]=1;
 			break;
-		case 3:
+		case 3: //_|~
 			size_h=2;
 			size_w=3;
 			shape[0][1]=1;
@@ -209,7 +209,7 @@ void Piece::set_shape(int &cshape, int shape[][4],int &size_w,int &size_h)
 			shape[1][1]=1;
 			break;
 
-		case 4:
+		case 4: //~|_
 			size_h=2;
 			size_w=3;
 			shape[0][0]=1;
@@ -218,7 +218,7 @@ void Piece::set_shape(int &cshape, int shape[][4],int &size_w,int &size_h)
 			shape[1][2]=1;
 			break;
 
-		case 5:	
+		case 5:	//[]
 			size_h=2;
 			size_w=2;
 			shape[0][0]=1;
@@ -227,7 +227,7 @@ void Piece::set_shape(int &cshape, int shape[][4],int &size_w,int &size_h)
 			shape[1][1]=1;
 			break;
 
-		case 6:	
+		case 6:	//_L
 			size_h=2;
 			size_w=3;
 			shape[0][1]=1;
@@ -263,7 +263,7 @@ void Piece::rotate()
 	for(i=0;i<4;i++)
 		for(j=0;j<4;j++)
 			temp[j][i]=box_shape[i][j];
-	i=size_h;
+	i=size_h;  //swap size_h and size_w
 	size_h=size_w;
 	size_w=i;
 	for(i=0;i<size_h;i++)
@@ -271,22 +271,22 @@ void Piece::rotate()
 			box_shape[i][size_w-1-j]=temp[i][j];
 
 
-	if(isaggin()){
+	if(isaggin()){    //isaggin() return true if box-shape touched boundary or other shapes.
 		for(int i=0; i<4;i++)
 			for(int j=0;j<4;j++)
-				box_shape[i][j]=temp_piece[i][j];
+				box_shape[i][j]=temp_piece[i][j];  //so here keep shapes the same.
 		size_w=tmp_size_w;
 		size_h=tmp_size_h;
 	}
 	else{
-		for(int i=0; i<4;i++)
+		for(int i=0; i<4;i++)   //set shape to null.
 			for(int j=0;j<4;j++){
 				if(temp_piece[i][j]==1){
 					mvwaddch(game_win,head_y+i,head_x+j,' ');
 					wrefresh(game_win);
 				}
 			}
-		for(int i=0; i<size_h;i++)
+		for(int i=0; i<size_h;i++)  //set new shape after rotating.
 			for(int j=0;j<size_w;j++){
 				if(this->box_shape[i][j]==1){
 					mvwaddch(game_win,head_y+i,head_x+j,'#');
